@@ -3,21 +3,33 @@ context("oa_get")
 test_that("oa_get works", {
   skip_on_cran()
 
-  urls <- c('http://data.openaddresses.io.s3.amazonaws.com/20150727/au-tas-launceston.csv', 'http://data.openaddresses.io.s3.amazonaws.com/20150523/br-pe-recife.zip', 'http://data.openaddresses.io.s3.amazonaws.com/20150803/ca-bc-north_vancouver.zip', 'http://data.openaddresses.io.s3.amazonaws.com/20150713/ca-bc-okanagan_similkameen.zip', 'http://data.openaddresses.io.s3.amazonaws.com/20150805/ca-on-kingston.csv', 'http://data.openaddresses.io.s3.amazonaws.com/20150626/ca-on-ottawa.zip', 'http://data.openaddresses.io.s3.amazonaws.com/20150511/ca-on-york_region.zip', 'http://s3.amazonaws.com/openaddresses-cfa/20141030/de-berlin.zip', 'http://data.openaddresses.io.s3.amazonaws.com/20150523/fr-bano.zip')
-
   # works for zip files
-  aa <- oa_get(urls[3])
+  url1 <- "http://data.openaddresses.io/runs/128358/us/ma/town_of_newton.zip"
+  aa <- oa_get(url1)
 
-  expect_is(aa, "data.frame")
   expect_is(aa, "oa")
-  expect_equal(attr(aa, "id"), urls[3])
+  expect_is(aa[[1]], "data.frame")
+  expect_equal(attr(aa, "id"), url1)
 
   # works for csv files
-  bb <- suppressWarnings(oa_get(urls[5]))
+  url2 <- "http://data.openaddresses.io/runs/142443/us/md/howard.zip"
+  bb <- suppressWarnings(oa_get(url2))
 
-  expect_is(bb, "data.frame")
   expect_is(bb, "oa")
-  expect_equal(attr(bb, "id"), urls[5])
+  expect_is(bb[[1]], "data.frame")
+  expect_equal(attr(bb, "id"), url2)
+
+  # # works for geojson files
+  # cc <- oa_get('http://data.openaddresses.io.s3.amazonaws.com/20150523/br-pe-recife.zip')
+  #
+  # expect_is(cc, "oa")
+  # expect_is(cc[[1]], "data.frame")
+  # expect_equal(attr(cc, "id"), urls[2])
+  # # geojson data exists
+  # expect_true("geometry.type" %in% names(cc[[1]]))
+  # expect_true("geometry.coordinates" %in% names(cc[[1]]))
+  # expect_is(cc[[1]]$geometry.coordinates[[1]], "array")
+  # expect_type(cc[[1]]$geometry.coordinates[[1]][,,1], "double")
 })
 
 test_that("oa_get fails well", {
@@ -31,3 +43,9 @@ test_that("oa_get fails well", {
   expect_error(oa_get(5), "no 'oa_get' method")
   expect_error(oa_get(NA), "no 'oa_get' method")
 })
+
+# test_that("oa_get works when multiple data files to read", {
+#   url_mont <- 'http://data.openaddresses.io/runs/104134/us/ia/montgomery.zip'
+#   dd <- oa_get(url_mont)
+#   expect_is(dd, "oa")
+# })
